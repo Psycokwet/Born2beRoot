@@ -1,0 +1,223 @@
+hostname: scarboni42
+Domain name : ponyland
+root password : Ah que coucou bob 42
+scarboni password : Like a pony 42
+Encryption passphrase : Like a pony, in the pony world, like a pony 42
+
+
+static ip ? https://linuxconfig.org/how-to-setup-a-static-ip-address-on-debian-linux
+SUDO : https://linuxhint.com/sudo_debian10_buster/
+    to add sudo: sudo usermod -aG sudo <username>
+    to check groups : getent group <groupName>
+     groups scarboni
+
+create group : sudo groupadd
+ssh : https://www.linuxtricks.fr/wiki/ssh-installer-et-configurer-un-serveur-ssh
+to get ip : ip route (src ip)
+ssh actif ?  sudo service ssh status
+port forwarding : https://medium.com/platform-engineer/port-forwarding-for-ssh-http-on-virtualbox-459277a888be cat /etc/passwd
+block root for ssh: https://askubuntu.com/questions/27559/how-do-i-disable-remote-ssh-login-as-root-from-a-server
+restart : 
+# systemctl restart sshd
+# service sshd restart
+# /etc/init.d/ssh restart
+
+
+connect ssh  depuis windows : ssh -p 4242 scarboni@127.0.0.1 -v
+
+
+open ports: ss -lntp nope ufw status
+ufw : https://wiki.debian.org/Uncomplicated%20Firewall%20%28ufw%29
+
+
+SEE HOSTNAME : hostnamectl 
+CHANGE HOSTNAME : hostnamectl set-hostname scarboni42
+cat /etc/hostname pour voir hostname ou edit
+
+APPARMOR :  https://wiki.debian.org/AppArmor/HowToUse#Enable_AppArmor
+Is actif :  sudo apparmor_status
+Logs : /var/log/syslog and /var/log/kern.log 
+
+Mot de passe protection  : https://computingforgeeks.com/enforce-strong-user-password-policy-ubuntu-debian/ https://linux.die.net/man/8/pam_pwquality
+sudo apt-get -y install libpam-pwquality cracklib-runtime
+Etapes : 
+change /etc/pam.d/common-password file
+password        requisite                       pam_pwquality.so retry=3 minlen=10 maxrepeat=3 ucredit=-1 lcredit=-1 dcredit=-1 reject_username enforce_for_root difok=7          
+
+Add group user42 : sudo groupadd user42
+https://devconnected.com/how-to-list-users-and-groups-on-linux/
+
+sudo policy : https://www.sudo.ws/man/1.8.13/visudo.man.html  https://www.sudo.ws/man/sudoers.man.html
+
+Defaults        authfail_message="Well, that's too bad, you failed after %d attempts, sorry."
+Defaults        badpass_message="Not quite right, try again, just in case ?"
+Defaults        requiretty
+
+pour info sur tty : http://www.linusakesson.net/programming/tty/
+
+for logging : 
+https://ostechnix.com/how-to-change-default-sudo-log-file-in-linux/
+https://itectec.com/unixlinux/how-to-log-commands-within-a-sudo-su/
+https://www.sudo.ws/man/1.8.13/sudoreplay.man.html
+https://www.sudo.ws/pipermail/sudo-users/2021-May/006415.html
+
+See logs at : sudo cat /var/log/sudo/auth.log
+Paths utilisable, base :
+Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Paths utilisble result : 
+
+Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
+
+
+monitoring.sh : 
+https://tldp.org/HOWTO/Bash-Prog-Intro-HOWTO-5.html
+
+
+cron 
+Holà, j’ai un problème que j’ai du mal à résoudre avec ce fameux crontab en effet il ne s’exécute jamais pourtant je suis sur root, je le génère avec crontab -e et je tente un commande basique. pour info un crontab -l me renvoie « * * * * * echo yesai » j’ai manqué quelquechose ?
+Wil — 06/11/2021
+Ton script fonctionne ?
+Tu utilises pas echo dans une crontask btw un conseil :smile:
+tscandol (Thibault) — 06/11/2021
+Non il tourne pas je pensais que c’était un problème de droit mais il est exécutable (le écho c’était juste pour vérifier si le crontab exécutait quelquechose)  écho dans crontab ça ne marche pas ou c’est déconseillé ?
+Mon monitoring.sh fonctionne si je le bash*
+tscandol (Thibault) — 06/11/2021
+Pour info problème réglé en allant modifier etc/crontab directement
+
+https://vitux.com/how-to-setup-a-cron-job-in-debian-10/
+https://man7.org/linux/man-pages/man8/lvs.8.html
+https://www.sudo.ws/man/sudoers.man.html
+https://www.shell-tips.com/linux/sudo-sorry-you-must-have-a-tty-to-run-sudo/#:~:text=The%20error%20message%20sudo%3A%20sorry,default%20to%20require%20a%20tty%20.
+https://linux.die.net/man/5/sudoers#:~:text=The%20sudoers%20security%20policy%20requires,for%20the%20user%20or%20command.
+
+ sudo chage -m 2 scarboni
+ sudo chage -M 30 scarboni
+ sudo chage -l scarboni
+
+ scarboni@scarboni42:~$ sudo systemctl -i reboot
+
+Lvm pour faire des partitions virtuelles
+Visible que depuis le systeme qui a lvm chargé, au contraire des partition comme avec gparted qu'on peut voir de partout
+
+Input et output log sudo : 
+
+ sudo ufw allow 8080
+sudo ufw delete 2
+
+
+Prepared correction : 
+--Project overview
+
+certUtil -hashfile .\deb2.vdi sha1 
+diff fba59600d6e099c5d2bb0b4624913e5f8cc9fa84 
+
+Centos et debian sont un peu similaires dans le sens ou ils sont mis a jours peut regulierement pour des questions de stabilité de version. Centos a une garantie de 10 ans de poursuite, contrairement a debian, mais en vrai, ça se casse la gueule dernierement, ça risque de s'arreter prematurément, malgré que ça soit encore bien populaire
+C'est quoi une vm ?
+Une machine virtuelle (“invitée”, ou “client”) est une émulation d’une machine par un logiciel, sur une machine réelle (« hôte », par exemple un serveur) : les fonctionnalités exécutées par la machine virtuelle sont différentes de celles de la machine réelle qui l’abrite. Une machine virtuelle est en réalité un fichier informatique (ou image) qui simule un ordinateur.
+Elle est capable d’exécuter des programmes grâce à l’allocation de ressources de l’hôte (disque dur et mémoire, logiciels, processeurs, systèmes d’exploitation, interface avec le réseau, périphériques…). Ces ressources sont simulées mais identiques à celle d’une machine réelle. Pour l’utilisateur, il s’agit d’un PC virtuel, indépendant avec sa mémoire et son système d’exploitation (OS) : elle lui apparaît sous la forme d’une fenêtre. 
+
+interet VM : Pouvoir avoir plein de machine differentes sur un seul pc pour exploiter au mieux les resources, avoir un environnement portable sur toute machines (bien pour test ou dev), acceder a des os different, ou des logiciel innaccessible sur l'os hote, faire un sas securité (surveillance antivirus)
+
+Aptitude c'est une surcouche de apt, y'a le coté graphique, mais la gestion des dependance est aussi un peu differente.
+Apparmor ça permet de controller l'acces a des paths, en opposition a Selinux qui controlle l'acces a des inodes. On peut restreindre ou juste surveiller ce qu'il se passe avec les Paths
+
+--Simple setup
+
+sudo ufw status
+ssh -p 4242 scarboni@127.0.0.1
+uname -a
+
+--User 
+
+groups scarboni
+
+sudo useradd login
+sudo passwd login
+groups login
+sudo usermod -aG user42 login
+sudo usermod -aG sudo login
+
+sudo chage -l login
+
+ Rule password :
+/etc/login.defs for delays
+change /etc/pam.d/common-password file
+password        requisite                       pam_pwquality.so retry=3 minlen=10 maxrepeat=3 ucredit=-1 lcredit=-1 dcredit=-1 reject_username enforce_for_root difok=7  
+
+sudo groupadd evaluating
+sudo usermod -aG evaluating login
+groups login
+
+Une bonne politque de mdp aide a proteger les compte contre des attaque en brute force par exemple, ça force a appliquer des bonnes pratique de sécurité. 
+Le désavantage, c'est que certains mots de passe étant rendu impossible, ça réduit dans une certaine mesure les possibilité de mots de passe + ça peut rendre
+ compliqué la creation de mot de passe, ainsi que le fait de s'en souvenir (et du coup, stockage hasardeux)
+
+-- Hostname and partitions
+
+hostnamectl
+sudo hostnamectl set-hostname login
+cat /etc/hostname || hostnamectl
+sudo systemctl -i reboot
+sudo hostnamectl set-hostname scarboni42
+
+lsblk
+
+Lvm pour faire des partitions virtuelles
+Visible que depuis le systeme qui a lvm chargé, au contraire des partition comme avec gparted qu'on peut voir de partout, c'est pas comme les partition classique avec
+ format particulier tout au long de la partition, c'est plus flexible
+C'est lvm qui doit lire la partition une fois l'os chargé, sans lvm, la partition deviens invisible
+D'ou la verification qu'il est actif dans le monitoring.
+De plus, comme il n'y a pas d'operation lourde pour manipuler/modifier les partitions virtuelle, en opposition aux partitions classique, on peut modifier les 
+ partitions en étant dessus. On peut egalement faire une partition virtuelle a partir de plusiques disques physiques ou depuis des espaces memoire séparés
+ https://wiki.ubuntu.com/Lvm
+
+-- SUDO
+sudo usermod -aG sudo login
+
+sudo visudo
+
+Defaults        env_reset
+Defaults        mail_badpass
+Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
+Defaults        authfail_message="Well, that's too bad, you failed after %d attempts, sorry."
+Defaults        badpass_message="Not quite right, try again, just in case ?"
+Defaults        requiretty
+Defaults        iolog_dir=/var/log/sudo/IO_logs
+Defaults        log_output
+Defaults        log_input
+
+sudo sudoreplay -d /var/log/sudo/IO_logs -l 
+sudo apt update 
+
+sudo ls /var/log/sudo/
+
+--ufw
+
+sudo ufw status
+
+protege les entrées sorties, notamment contre les bots qui bruteforce pour rentrer dans les servers
+
+sudo ufw allow 8080
+sudo ufw delete 2
+sudo ufw status
+
+--ssh
+
+sudo service ssh status
+Permet de se connecter a distance sur une machine, dans notre cas par exemple, ça permet d'avoir un shell local sur mon windows de qualitay, pour acceder a ma vm server minimale
+sans gui
+
+cat /etc/ssh/sshd_config 
+Port 4242
+
+
+ ssh -p 4242 login@127.0.0.1
+ ssh -p 4242 root@127.0.0.1
+
+--SCRIPT
+cron permet de lancer des taches selons des regles de frequences poussées
+
+su root 
+crontab -e
+*/10 * * * * sh /scripts/monitoring.sh
+*/1 * * * * sh /scripts/monitoring.sh
